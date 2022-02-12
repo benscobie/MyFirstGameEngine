@@ -22,10 +22,19 @@
                 {
                     case ConsoleKey.W:
                     {
+                        var rnd = new Random();
                         var woodCutter = entityManager.CreateEntity<Woodcutter>();
-                        entityManager.SpawnEntity(woodCutter, new Point(1, 1));
+                        entityManager.SpawnEntity(woodCutter, new Point(rnd.Next(0, 100), rnd.Next(0, 25)));
                     }
                     break;
+                    
+                    case ConsoleKey.T:
+                    {
+                        var rnd = new Random();
+                        var tree = entityManager.CreateEntity<Tree>();
+                        entityManager.SpawnEntity(tree, new Point(rnd.Next(0, 100), rnd.Next(0, 25)));
+                    }
+                        break;
                 }
             }
         }

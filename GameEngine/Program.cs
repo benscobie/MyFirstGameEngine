@@ -50,15 +50,6 @@ static async void Run(IServiceProvider services)
         entityManager.SpawnEntity(entity, new Point(i, 10));
     }
 
-    var entityOne = entityManager.CreateEntity<Woodcutter>();
-    entityManager.SpawnEntity(entityOne, new Point(5, 1));
-    
-    var tree = entityManager.CreateEntity<Tree>();
-    entityManager.SpawnEntity(tree, new Point(25, 25));
-
-    entityManager.FindNearestEntityOfType(entityOne.GetPosition(), typeof(Tree));
-    entityOne.SetDestination(tree);
-    
     gameManager.Render(world);
 
     while (true)
