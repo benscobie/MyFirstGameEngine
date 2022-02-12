@@ -6,13 +6,26 @@
     {
         private int _lumberCount = 20;
 
-        public Tree(char renderCharacter = 'O') : base(renderCharacter)
+        public Tree()
         {
+            RenderCharacter = 'O';
         }
 
         public override void Update(TimeSpan gameTime)
         {
             
+        }
+
+        public int Chop()
+        {
+            _lumberCount--;
+
+            if (_lumberCount == 0)
+            {
+                // TODO Destroy myself
+            }
+
+            return _lumberCount;
         }
     }
 }

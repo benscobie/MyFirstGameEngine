@@ -1,39 +1,38 @@
 ﻿namespace GameEngine
 {
     using System;
-    using System.Collections.Generic;
+    using GameEngine.Entities;
 
     public interface IGameManager
     {
-        void ProcessInput();
-        void Update(TimeSpan gameTime);
-        void Render(Map map);
-        IList<Entity> GetEntities();
-        void AddEntity(Entity entity);
+        void ProcessInput(EntityManager entityManager);
+        void Update(EntityManager entityManager, TimeSpan gameTime);
+        void Render(World world);
     }
 
     public class GameManager : IGameManager
     {
-        private IList<Entity> _entities { get; } = new List<Entity>();
-
-        public void ProcessInput()
+        public void ProcessInput(EntityManager entityManager)
         {
-            
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.W:
+                    {
+                        var woodCutter = entityManager.CreateEntity<Woodcutter>();
+                        entityManager.SpawnEntity(woodCutter, new Point(1, 1));
+                    }
+                    break;
+                }
+            }
         }
 
-        public IList<Entity> GetEntities()
+        public void Update(EntityManager entityManager, TimeSpan gameTime)
         {
-            return _entities;
-        }
-
-        public void AddEntity(Entity entity)
-        {
-            _entities.Add(entity);
-        }
-
-        public void Update(TimeSpan gameTime)
-        {
-            foreach (var entity in _entities)
+            foreach (var entity in entityManager.GetAllEntities())
             {
                 if (entity.ShouldUpdate(gameTime))
                 {
@@ -42,9 +41,9 @@
             }
         }
 
-        public void Render(Map map)
+        public void Render(World world)
         {
-            map.Render();
+            world.Render();
         }
     }
 }

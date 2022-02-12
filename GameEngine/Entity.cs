@@ -12,14 +12,32 @@
     {
         public int UpdateDelayTicks = 0;
         public int TicksSinceLastUpdate = 0;
-        public readonly char RenderCharacter;
-        public Point? Position;
+        public char RenderCharacter = ' ';
+        protected Point? _position { get; set; }
+        protected EntityManager EntityManager { get; set; }
 
-        public Entity(char renderCharacter)
+        public void SetEntityManager(EntityManager entityManager)
         {
-            RenderCharacter = renderCharacter;
+            EntityManager = entityManager;
         }
-        
+
+        public void Spawn(Point point)
+        {
+            if (_position != null)
+            {
+                throw new InvalidOperationException("Entity has already spawned");
+            }
+
+            _position = point;
+
+            OnCreate();
+        }
+
+        public Point? GetPosition()
+        {
+            return _position;
+        }
+
         public bool ShouldUpdate(TimeSpan gameTime)
         {
             // TODO This is all shit, remove
@@ -33,6 +51,16 @@
             return true;
         }
 
-        public abstract void Update(TimeSpan gameTime);
+        public virtual void Update(TimeSpan gameTime)
+        {
+        }
+
+        public virtual void OnCreate()
+        {
+        }
+
+        public virtual void OnDestroy(TimeSpan gameTime)
+        {
+        }
     }
 }

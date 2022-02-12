@@ -2,18 +2,16 @@
 {
     using System;
 
-    public class MoveableEntity : Entity
+    public abstract class MoveableEntity : Entity
     {
-        protected readonly MovementManager MovementManager;
+        protected MovementManager MovementManager { get; set; }
         protected Entity? DestinationEntity { get; set; }
         protected Point? DestinationPoint { get; set; }
         protected int Speed { get; set; } = 5;
-
-        protected bool AtDestination = true;
-        
+        protected bool AtDestination { get; set; } = true;
         private TimeSpan TimeSinceLastMovementUpdate { get; set; } = TimeSpan.Zero;
-        
-        public MoveableEntity(char renderCharacter, MovementManager movementManager) : base(renderCharacter)
+
+        public void SetMovementManager(MovementManager movementManager)
         {
             MovementManager = movementManager;
         }
@@ -27,7 +25,7 @@
         {
             if (DestinationEntity != null || DestinationPoint != null)
             {
-                var destination = (DestinationEntity != null ? DestinationEntity.Position : DestinationPoint);
+                var destination = (DestinationEntity != null ? DestinationEntity.GetPosition() : DestinationPoint);
 
                 if (destination == null) return;
 

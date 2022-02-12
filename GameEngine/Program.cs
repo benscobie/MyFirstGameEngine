@@ -39,34 +39,27 @@ static async void Run(IServiceProvider services)
 
     width = 150;
     height = 40;
-    
-    var map = new Map(height, width);
-    var movementManager = new MovementManager(map);
 
-    // TODO Perhaps the "game manager" should control the entities, and the map just hold a reference to these?
+    var world = new World(height, width);
+    var movementManager = new MovementManager(world);
+    var entityManager = new EntityManager(world, movementManager);
 
     for (var i = 5; i < 20; i++)
     {
-        var entity = new Hill();
-        gameManager.AddEntity(entity);
-        entity.Position = new Point(i, 10);
-        map.AddEntity(entity);
+        var entity = entityManager.CreateEntity<Hill>();
+        entityManager.SpawnEntity(entity, new Point(i, 10));
     }
 
-    var entityOne = new MoveableEntity('L', movementManager);
-    gameManager.AddEntity(entityOne);
-    entityOne.Position = new Point(5, 1);
-    map.AddEntity(entityOne);
+    var entityOne = entityManager.CreateEntity<Woodcutter>();
+    entityManager.SpawnEntity(entityOne, new Point(5, 1));
     
-    var tree = new Tree();
-    tree.Position = new Point(25, 25);
-    gameManager.AddEntity(tree);
-    map.AddEntity(tree);
+    var tree = entityManager.CreateEntity<Tree>();
+    entityManager.SpawnEntity(tree, new Point(25, 25));
 
-    map.FindNearestEntityOfType(entityOne.Position, typeof(Tree));
+    entityManager.FindNearestEntityOfType(entityOne.GetPosition(), typeof(Tree));
     entityOne.SetDestination(tree);
     
-    gameManager.Render(map);
+    gameManager.Render(world);
 
     while (true)
     {
@@ -75,9 +68,9 @@ static async void Run(IServiceProvider services)
         var timePassedSinceLastLoop = actualTime - previousGameTime;
         previousGameTime += timePassedSinceLastLoop;
 
-        gameManager.ProcessInput();
-        gameManager.Update(timePassedSinceLastLoop);
-        gameManager.Render(map);
+        gameManager.ProcessInput(entityManager);
+        gameManager.Update(entityManager, timePassedSinceLastLoop);
+        gameManager.Render(world);
 
         var processingTime = DateTime.UtcNow - actualTime;
         var sleepMs = Math.Max(requiredMsPerFrame - processingTime.Milliseconds, 0);

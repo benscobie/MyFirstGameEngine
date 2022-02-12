@@ -5,21 +5,21 @@
     using AStar;
     using AStar.Options;
 
-    public class MovementManager
+    public class MovementManager : IMovementManager
     {
-        private readonly Map _map;
+        private readonly World _world;
         private short[,] _tiles;
 
-        public MovementManager(Map map)
+        public MovementManager(World world)
         {
-            _map = map;
+            _world = world;
             _tiles = GenerateWorldGridTileSet();
         }
 
         public MoveResult Move(MoveableEntity entity, Point destination)
         {
             // TODO Probably shouldn't recalculate this each time?
-            var path = GetPathToPoint(entity.Position, destination);
+            var path = GetPathToPoint(entity.GetPosition(), destination);
 
             if (path.Count == 0)
             {
@@ -40,10 +40,10 @@
 
             var nextNode = path[1];
 
-            _map.MoveEntity(entity.Position, nextNode);
-            entity.Position.X = nextNode.X;
-            entity.Position.Y = nextNode.Y;
-            _tiles[entity.Position.X, entity.Position.Y] = 1;
+            _world.MoveEntity(entity.GetPosition(), nextNode);
+            entity.GetPosition().X = nextNode.X;
+            entity.GetPosition().Y = nextNode.Y;
+            _tiles[entity.GetPosition().X, entity.GetPosition().Y] = 1;
             _tiles[nextNode.X, nextNode.Y] = 0;
 
             // We've just moved so now we have 2 nodes left, one is where we are, the other tile we can't move into.
@@ -82,13 +82,13 @@
 
         private short[,] GenerateWorldGridTileSet()
         {
-            var tiles = new short[_map.Width, _map.Height];
+            var tiles = new short[_world.Width, _world.Height];
             
-            for (var x = 0; x < _map.MapTiles.GetLength(0); x++)
+            for (var x = 0; x < _world.MapTiles.GetLength(0); x++)
             {
-                for (var y = 0; y < _map.MapTiles.GetLength(1); y++)
+                for (var y = 0; y < _world.MapTiles.GetLength(1); y++)
                 {
-                    var entityAtPosition = _map.MapTiles[x, y];
+                    var entityAtPosition = _world.MapTiles[x, y];
                     if (entityAtPosition == null)
                     {
                         tiles[x, y] = 1;

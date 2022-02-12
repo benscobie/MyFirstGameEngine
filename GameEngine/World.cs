@@ -5,13 +5,13 @@
     using System.Text;
     using GameEngine.Search.KDTree;
 
-    public class Map
+    public class World
     {
         public readonly Entity?[,] MapTiles;
         public readonly int Height;
         public readonly int Width;
 
-        public Map(int height, int width)
+        public World(int height, int width)
         {
             Height = height;
             Width = width;
@@ -20,6 +20,8 @@
 
         public void Render()
         {
+            //var currentCursorPosition = Console.GetCursorPosition();
+            
             // TODO This is not-great performance. Should just re-render the specific X,Y co-ordinates when an entity moves.
             Console.SetCursorPosition(0, 0);
             
@@ -43,11 +45,13 @@
 
                 Console.WriteLine(lineBuffer.ToString());
             }
+            
+            //Console.SetCursorPosition(currentCursorPosition.Left, currentCursorPosition.Top);
         }
 
         public void AddEntity(Entity entity)
         {
-            MapTiles[entity.Position.X, entity.Position.Y] = entity;
+            MapTiles[entity.GetPosition().X, entity.GetPosition().Y] = entity;
         }
 
         public void MoveEntity(Point from, Point to)
@@ -65,29 +69,6 @@
         {
             // TODO
             throw new NotImplementedException();
-        }
-
-        public Entity? FindNearestEntityOfType(Point point, Type? entityTypeToFind)
-        {
-            var tree = new KdTree.KdTree<int, Entity>(2, new IntMath());
-            
-            for (int x = 0; x < MapTiles.GetLength(0); x++)
-            {
-                for (int y = 0; y < MapTiles.GetLength(1); y++)
-                {
-                    if (x == point.X && y == point.Y) continue;
-                    var entityAtPosition = MapTiles[x, y];
-                    if (entityAtPosition == null || entityAtPosition.GetType() != entityTypeToFind) continue;
-
-                    tree.Add(new[] { x, y }, entityAtPosition);
-                }
-            }
-
-            var nodes = tree.GetNearestNeighbours(new[] { point.X, point.Y }, 1);
-
-            if (nodes.Length != 1) return null;
-
-            return nodes.Single().Value;
         }
     }
 }

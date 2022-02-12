@@ -4,8 +4,9 @@
 
     public class Hill : Entity
     {
-        public Hill(char renderCharacter = '^') : base(renderCharacter)
+        public Hill()
         {
+            RenderCharacter = '^';
         }
 
         public override void Update(TimeSpan gameTime)
